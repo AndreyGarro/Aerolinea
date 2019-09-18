@@ -57,8 +57,8 @@ public class SqliteConection {
 		List<String> listaCodigos = new ArrayList<String>();
 		
 		//Carga lista para códigos
-		List<String> listaAbecedario = readList("SqliteConection\\data\\abecedario.txt");
-		List<String> listaNumeros = readList("SqliteConection\\data\\numeros.txt");
+		List<String> listaAbecedario = readList("..\\SqliteConection\\data\\abecedario.txt");
+		List<String> listaNumeros = readList("..\\SqliteConection\\data\\numeros.txt");
 		
 		//Longitudes de listas
 		int lenAbecedario = listaAbecedario.size();
@@ -90,17 +90,17 @@ public class SqliteConection {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Connection c = getConnection("C:\\Users\\diego\\OneDrive\\Documentos\\Bases de Datos\\TareaCorta1 - copia\\database.sqlite3");
+		Connection c = getConnection("..\\database.sqlite3");
 		Random rand = new Random();
 		String codigo;
 		
 		//Carga datos para los empleados
-		List<String> listaNombres = readList("SqliteConection\\data\\nombres.txt");
-		List<String> listaApellidos = readList("SqliteConection\\data\\apellidos.txt");
-		List<String> listaCedulas = readList("SqliteConection\\data\\cedulas.txt");
-		List<String> listaCuentas = readList("SqliteConection\\data\\cuentas_banco.txt");
-		List<String> listaDirecciones = readList("SqliteConection\\data\\direcciones.txt");
-		List<String> listaHorarios = readList("SqliteConection\\data\\horarios.txt");
+		List<String> listaNombres = readList("..\\SqliteConection\\data\\nombres.txt");
+		List<String> listaApellidos = readList("..\\SqliteConection\\data\\apellidos.txt");
+		List<String> listaCedulas = readList("..\\SqliteConection\\data\\cedulas.txt");
+		List<String> listaCuentas = readList("..\\SqliteConection\\data\\cuentas_banco.txt");
+		List<String> listaDirecciones = readList("..\\SqliteConection\\data\\direcciones.txt");
+		List<String> listaHorarios = readList("..\\SqliteConection\\data\\horarios.txt");
 		List<String> listaCodigos = new ArrayList<String>();
 		
 		int lenCuentas = listaCuentas.size();
@@ -132,7 +132,7 @@ public class SqliteConection {
 		
 //		----------------------------------------------------------------------------------------------------------------------------------------
 		//Carga datos para aerolinea
-		List<String> listaAerolineas = readList("SqliteConection\\data\\aerolineas.txt");
+		List<String> listaAerolineas = readList("..\\SqliteConection\\data\\aerolineas.txt");
 		int lenAerolineas = listaAerolineas.size();
 		
 		
@@ -153,9 +153,9 @@ public class SqliteConection {
 		
 //		----------------------------------------------------------------------------------------------------------------------------------------
 		//Carga datos para las aerolineas
-		List<String> listaAeropuertos = readList("SqliteConection\\data\\aeropuertos.txt");
-		List<String> listaNumerosAero = readList("SqliteConection\\data\\telefonos.txt");
-		List<String> listaCiudades = readList("SqliteConection\\data\\ciudades.txt");
+		List<String> listaAeropuertos = readList("..\\SqliteConection\\data\\aeropuertos.txt");
+		List<String> listaNumerosAero = readList("..\\SqliteConection\\data\\telefonos.txt");
+		List<String> listaCiudades = readList("..\\SqliteConection\\data\\ciudades.txt");
 		int lenAeropuertos = listaAeropuertos.size();
 		int lenNumerosAero = listaNumerosAero.size();
 		int lenCiudades = listaCiudades.size();
@@ -177,8 +177,8 @@ public class SqliteConection {
 		
 //		----------------------------------------------------------------------------------------------------------------------------------------
 		//Carga datos para Avion
-		List<String> listaModeloAvion = readList("SqliteConection\\data\\modelos_aviones.txt");
-		List<String> listaFabAviones = readList("SqliteConection\\data\\fab_aviones.txt");
+		List<String> listaModeloAvion = readList("..\\SqliteConection\\data\\modelos_aviones.txt");
+		List<String> listaFabAviones = readList("..\\SqliteConection\\data\\fab_aviones.txt");
 		int lenModeloAvion = listaModeloAvion.size();
 		int lenFabAviones = listaFabAviones.size();
 		List<String> listaEstado = new ArrayList<String>();
@@ -186,37 +186,7 @@ public class SqliteConection {
 		listaEstado.add("En reparación");
 		listaEstado.add("Inactivo");
 		
-		//Inserta datos de los aeropuertos
-		listaCodigos = generateCode("AV", 60);
-		datos = "";
-		for (int i = 0; i < 60; i++) {
-			if(i == 59) {
-				datos += "(\""+ listaCodigos.get(i) + "\", \"" + listaModeloAvion.get(rand.nextInt(lenModeloAvion)) + "\", "
-						+ (rand.nextInt(350)+150) + ", "+rand.nextInt(60) + ", \""+ listaEstado.get(rand.nextInt(3)) +"\", \""+
-						listaFabAviones.get(rand.nextInt(lenFabAviones))+ "\");";
-			}else {
-				datos += "(\""+ listaCodigos.get(i) + "\", \"" + listaModeloAvion.get(rand.nextInt(lenModeloAvion)) + "\", "
-						+ (rand.nextInt(350)+150) +", "+ rand.nextInt(60) + ", \""+ listaEstado.get(rand.nextInt(3)) +"\", \""+
-						listaFabAviones.get(rand.nextInt(lenFabAviones))+ "\"),\n";
-			}
-		}
-		insertData("Avion", "Codigo, Nombre, NumeroTelefono, Localizacion", datos, c);
-		
-//		----------------------------------------------------------------------------------------------------------------------------------------
-		//Carga datos para clase
-		List<String> listaClases = new ArrayList<String>();
-		List<String> listaPrecios = new ArrayList<String>();
-	
-		listaClases.add("Primera Clase");
-		listaPrecios.add("");
-		listaClases.add("Clase Ejecutiva");
-		listaPrecios.add("");
-		listaClases.add("Clase Premium Economy");
-		listaPrecios.add("");
-		listaClases.add("Clase Turista");
-		listaPrecios.add("");
-		
-		//Inserta datos de los aeropuertos
+		//Inserta datos de los Avion
 		listaCodigos = generateCode("AV", 60);
 		datos = "";
 		for (int i = 0; i < 60; i++) {
@@ -231,5 +201,50 @@ public class SqliteConection {
 			}
 		}
 //		insertData("Avion", "Codigo, Nombre, NumeroTelefono, Localizacion", datos, c);
+		
+//		----------------------------------------------------------------------------------------------------------------------------------------
+		//Carga datos para clase
+		List<String> listaClases = new ArrayList<String>();
+		List<Integer> listaPrecios = new ArrayList<Integer>();
+	
+		listaClases.add("Primera Clase");
+		listaPrecios.add(500000);
+		listaClases.add("Clase Ejecutiva");
+		listaPrecios.add(400000);
+		listaClases.add("Clase Premium Economy");
+		listaPrecios.add(415000);
+		listaClases.add("Clase Turista");
+		listaPrecios.add(250000);
+		
+		datos = "";
+		for (int i = 0; i < 4; i++) {
+			if(i == 3) {
+				datos += "(\""+ listaClases.get(i) + "\", \"" + listaPrecios.get(i) + "\");";
+			}else {
+				datos += "(\""+ listaClases.get(i) + "\", \"" + listaPrecios.get(i) + "\"),\n";
+			}
+		}
+		//insertData("Clase","Nombre, Precio", datos, c);
+		
+//		----------------------------------------------------------------------------------------------------------------------------------------
+		//Carga datos para Controlador
+		List<String> listaFechasHoras = readList("..\\SqliteConection\\data\\fechas_horas.txt");
+		List<String> listaPosiciones = readList("..\\SqliteConection\\data\\posiciones_aviones.txt");
+		int lenListaFechasHoras= listaFechasHoras.size();
+		int lenListaPosiciones = listaPosiciones.size();
+		
+		//Inserta datos del Controlador
+		listaCodigos = generateCode("COM", 40);
+		datos = "";
+		for (int i = 0; i < 20 ; i++) {
+			if(i == 19) {
+				datos += "(\""+ listaCodigos.get(i) + "\", \"" + listaFechasHoras.get(rand.nextInt(lenListaFechasHoras)) + "\", "
+						+ listaPosiciones.get(rand.nextInt(lenListaPosiciones)) + "\");";
+			}else {
+				datos += "(\""+ listaCodigos.get(i) + "\", \"" + listaFechasHoras.get(rand.nextInt(lenListaFechasHoras)) + "\", \""
+						+ listaPosiciones.get(rand.nextInt(lenListaPosiciones)) + "\"),\n";
+			}
+		}
+		insertData("Controlador", "CodigoComunicacion, HoraLlegada, PosicionAvion", datos, c);
 	}
 }
