@@ -1,0 +1,6 @@
+Lunes a Viernes - 7 a.m a 3 p.m
+Lunes a Jueves - 8 a.m a 4 p.m
+Martes a Sábado - 2 p.m a 10 p.m
+Miércoles a Domingo - 9 a.m a 5 p.m
+Sábado y Domingo - 10 a.m a 5 p.m
+Jueves a Lunes - 7 a.m a 3 p.m
