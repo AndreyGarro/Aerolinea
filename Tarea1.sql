@@ -74,7 +74,9 @@ CREATE TABLE IF NOT EXISTS Proforma
     Costo INTEGER NOT NULL,
     FechaLlegada DATE NOT NULL,
     FechaSalida DATE NOT NULL,
-    Daños TEXT NOT NULL    
+    Daños TEXT NOT NULL,
+    IdTaller INTEGER NOT NULL,
+    FOREIGN KEY (IdTaller) REFERENCES Taller(IdTaller)
 );
 
 CREATE TABLE IF NOT EXISTS Avion
@@ -159,6 +161,18 @@ CREATE TABLE IF NOT EXISTS Controlador
     FOREIGN KEY (IdAvion) REFERENCES Avion(IdAvion)
 );
 
+CREATE TABLE IF NOT EXISTS Bodega
+(
+    IdBodega INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    Nombre NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Taller
+(
+    IdTaller INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    Nombre NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS AerolineaXEmpleado 
 (
     IdAeroLinea INTEGER NOT NULL,
@@ -195,6 +209,29 @@ CREATE TABLE IF NOT EXISTS AeropuertoXAerolinea
     FOREIGN KEY (IdAeroLinea) REFERENCES Aerolinea(IdAeroLinea)
 );
 
+CREATE TABLE IF NOT EXISTS  ClaseXAvion
+(
+    IdAvion INTEGER NOT NULL,
+    IdClase INTERGER NOT NULL,
+    FOREIGN KEY (IdAvion) REFERENCES Avion(IdAvion),
+    FOREIGN KEY (IdClase) REFERENCES Clase(IdClase)
+);
+
+CREATE TABLE IF NOT EXISTS  AvionXProforma
+(
+    IdAvion INTEGER NOT NULL,
+    IdProforma INTERGER NOT NULL,
+    FOREIGN KEY (IdAvion) REFERENCES Avion(IdAvion),
+    FOREIGN KEY (IdProforma) REFERENCES Proforma(IdProforma)
+);
+
+CREATE TABLE IF NOT EXISTS  BodegaXAvion
+(
+    IdAvion INTEGER NOT NULL,
+    IdBodega INTERGER NOT NULL,
+    FOREIGN KEY (IdAvion) REFERENCES Avion(IdAvion),
+    FOREIGN KEY (IdBodega) REFERENCES Bodega(IdBodega)
+);
 
 -- DROP TABLE Aerolinea;
 -- DROP TABLE Horario;
