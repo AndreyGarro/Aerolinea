@@ -14,7 +14,7 @@ import java.util.Random;
 
 public class SqliteConection {
 	
-	public static String getDate (Date fecha, int horas){
+	public static String generateDate (Date fecha, int horas){
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(fecha); 
 		calendar.add(Calendar.HOUR, horas);
@@ -341,12 +341,12 @@ public class SqliteConection {
 		// Inserta datos de las PuestoAeropuerto
 		datos = "";
 		int temp = 0;
-		for (int i = 0; i < 42; i++) {
-			temp = rand.nextInt(3);
-			if (i == 41) {
-				datos += "(\"" + listaPuestoAero.get(temp) + "\", "  + listaSalarioAero.get(temp) +");";
+		for (int i = 0; i < listaPuestoAero.size(); i++) {
+			temp = rand.nextInt(listaPuestoAero.size());
+			if (i == listaPuestoAero.size() - 1) {
+				datos += "(\"" + listaPuestoAero.get(i) + "\", "  + listaSalarioAero.get(i) +");";
 			} else {
-				datos += "(\"" + listaPuestoAero.get(temp) + "\", "  + listaSalarioAero.get(temp) +"),\n";
+				datos += "(\"" + listaPuestoAero.get(i) + "\", "  + listaSalarioAero.get(i) +"),\n";
 			}
 		}
 
@@ -365,12 +365,11 @@ public class SqliteConection {
 
 		// Inserta datos de las PuestoAerolinea
 		datos = "";
-		for (int i = 0; i < 42; i++) {
-			temp = rand.nextInt(2);
-			if (i == 41) {
-				datos += "(\"" + listaPuestoAerolinea.get(temp) + "\", " + listaSalarioAerolinea.get(temp) + ");";
+		for (int i = 0; i < listaSalarioAerolinea.size() ; i++) {
+			if (i == listaSalarioAerolinea.size() - 1) {
+				datos += "(\"" + listaPuestoAerolinea.get(i) + "\", " + listaSalarioAerolinea.get(i) + ");";
 			} else {
-				datos += "(\"" + listaPuestoAerolinea.get(temp) + "\", " + listaSalarioAerolinea.get(temp) + "),\n";
+				datos += "(\"" + listaPuestoAerolinea.get(i) + "\", " + listaSalarioAerolinea.get(i) + "),\n";
 			}
 		}
 
@@ -398,7 +397,7 @@ public class SqliteConection {
 				datos += "(\"" + listaClases.get(i) + "\", \"" + listaPrecios.get(i) + "\"),\n";
 			}
 		}
-		 insertData("Clase","Nombre, Precio", datos, c);
+		insertData("Clase","Nombre, Precio", datos, c);
 	
 // ----------------------------------------------------------------------------------------------------------------------------------------
 		//Carga datos para proforma
@@ -427,15 +426,15 @@ public class SqliteConection {
 		datos = "";
 		int pos = 0;
 		for (int i = 0; i < 20 ; i++) {
-			fechaLlegadaTemp = getDate(fechaTemp,-1* rand.nextInt(72));
+			fechaLlegadaTemp = generateDate(fechaTemp,-1* rand.nextInt(72));
 			pos = rand.nextInt(lenRepuestos);
 			if(i == 19) {
 				datos += "(\""+ listaRepuestos.get(pos) +"\", " + (rand.nextInt(2000000)+100000) + ", \""
-						+ fechaLlegadaTemp + "\", \""+ getDate(fechaTemp, rand.nextInt(130) + 10) + "\""
+						+ fechaLlegadaTemp + "\", \""+ generateDate(fechaTemp, rand.nextInt(130) + 10) + "\""
 								+ ",\"" + listaDanos.get(rand.nextInt(lenDanos)) + "\", \"" + idTalleres.get(rand.nextInt(lenIdTalleres)) + "\");";
 			}else {
 				datos += "(\""+ listaRepuestos.get(pos) +"\", " + (rand.nextInt(2000000)+100000) + ", \""
-						+ fechaLlegadaTemp + "\", \""+ getDate(fechaTemp, rand.nextInt(130) + 10) + "\" ,"
+						+ fechaLlegadaTemp + "\", \""+ generateDate(fechaTemp, rand.nextInt(130) + 10) + "\" ,"
 								+ "\"" + listaDanos.get(rand.nextInt(lenDanos)) + "\", \"" + idTalleres.get(rand.nextInt(lenIdTalleres)) + "\"),\n";
 			}
 		}
@@ -522,9 +521,9 @@ public class SqliteConection {
 		//Inserta datos de los Vuelos
 		datos = "";
 		for (int i = 0; i < 800 ; i++) {
-			fechaSalidaVuelo = getDate(fechaActual, rand.nextInt(5) + -10 * rand.nextInt(3));
+			fechaSalidaVuelo = generateDate(fechaActual, rand.nextInt(5) + -10 * rand.nextInt(3));
 			fechaSalida1 = formateador.parse(fechaSalidaVuelo);
-		    fechaLlegadaVuelo = getDate(fechaSalida1, rand.nextInt(20));
+		    fechaLlegadaVuelo = generateDate(fechaSalida1, rand.nextInt(20));
 		    fechaLlegada1 = formateador.parse(fechaLlegadaVuelo);
 		    if (fechaSalida1.compareTo(fechaActual) < 1){
 		    	if(fechaLlegada1.compareTo(fechaActual) >= 1) {
@@ -545,7 +544,6 @@ public class SqliteConection {
 						fechaLlegadaVuelo +"\", \""+ estadoVuelo + "\", "+ idAviones.get(rand.nextInt(lenIdAviones)) + "),\n";
 			}
 		}
-//		System.out.println(datos);
 		insertData("Vuelo", "NumeroVuelo, Destino, Origen, FechaSalida, FechaLlegada, EstadoVuelo, IdAvion", datos, c);
 				
 // ----------------------------------------------------------------------------------------------------------------------------------------
@@ -592,7 +590,6 @@ public class SqliteConection {
 				datos += "(\"" + (rand.nextInt(150) + 1) + "\", " + idPasajeros.get(rand.nextInt(lenIdPasajeros)) + "),\n";
 			}
 		}
-//		System.out.println(datos);
 		insertData("Equipaje","Peso, IdPasajero", datos, c);
 				
 // ----------------------------------------------------------------------------------------------------------------------------------------
@@ -620,6 +617,168 @@ public class SqliteConection {
 			}
 		}
 		 insertData("Controlador", "CodigoComunicacion, IdVuelo, Posicion", datos, c);
+		
+// ----------------------------------------------------------------------------------------------------------------------------------------		
+		
+		//Cargar datos para ClaseXAvion
+		List<Integer> idClase = consultInteger(c, "SELECT IdClase  FROM Clase", "IdClase");
+		int lenIdClase = idClase.size();
+		int lenAvion = idAvion.size();
+		datos = "";
+		for (int i = 0; i < lenAvion ; i++) {
+			int temp1 = rand.nextInt(lenIdClase) + 1;
+			if(temp1 == 0 || temp1 == 1) temp1 = 2;
+			for (int j = 0; j < temp1; j++) {
+				if (i == lenAvion - 1 && j == temp1 - 1) {
+					datos += "(" + idAviones.get(i) + ", "
+							+ idClase.get(j) + ");";
+				} else {
+					datos += "(" + idAviones.get(i) + ", "
+							+ idClase.get(j) + "),\n";
+				}
+			}
+		}
+		insertData("ClaseXAvion", "IdAvion, IdClase", datos, c);
+		
+// ----------------------------------------------------------------------------------------------------------------------------------------		
+		
+		//Cargar datos para BodegaXAvion
+		List<String> idAvionesInactivos = consultString(c, "SELECT IdAvion FROM Avion WHERE Estado = 'Inactivo'", "IdAvion");
+		List<Integer> idBodegas = consultInteger(c, "SELECT IdBodega FROM Bodega", "IdBodega");
+		int lenAvionesInactivos = idAvionesInactivos.size();
+		int lenBodegas = idBodegas.size();
+		datos = "";
+		int cont = 0;
+		for (int i = 0; i < lenBodegas ; i++) {
+			if(cont == lenAvionesInactivos) break;
+			for (int j = 0; j < 5; j++) {
+				if (i == lenAvionesInactivos - 1 && j == lenBodegas - 1 || cont == lenAvionesInactivos-1) {
+					datos += "(" + idAvionesInactivos.get(cont) + ", "
+							+ idBodegas.get(i) + ");";
+					cont++;
+					break;
+				} else {
+					datos += "(" + idAvionesInactivos.get(cont) + ", "
+							+ idClase.get(i) + "),\n";
+				}
+				cont++;
+			}
+		}
+		insertData("BodegaXAvion", "IdAvion, IdBodega", datos, c);
+		
+// ----------------------------------------------------------------------------------------------------------------------------------------		
+		
+		//Cargar datos para AeropuertoXEmpleado
+		List<Integer> idAeropuertos = consultInteger(c, "SELECT IdAeropuerto FROM Aeropuerto", "IdAeropuerto");
+		List<Integer> idEmpleados = consultInteger(c, "SELECT IdEmpleado FROM Empleado", "IdEmpleado");
+		List<Integer> idPuestoaeropuerto = consultInteger(c, "SELECT IdPuestoAeropuerto FROM PuestoAeropuerto", "IdPuestoAeropuerto");
+		int lenIdAeropuertos = idAeropuertos.size();
+		int lenEmpleados = idEmpleados.size();
+		int lenIdPuestoAeropuerto = idPuestoaeropuerto.size();
+		int random;
+		datos = "";
+		int crt_empl_asig = 0;
+		for (int i = 0; i < lenIdAeropuertos ; i++) {
+			random = rand.nextInt(10) + 5;
+			for (int j = 0; j < random; j++) {
+				if (i == lenIdAeropuertos - 1 && j == random - 1) {
+					datos += "(" + idAeropuertos.get(i) + ", "
+							+ idEmpleados.get(crt_empl_asig) + ", " + idPuestoaeropuerto.get(rand.nextInt(lenIdPuestoAeropuerto)) +");";
+				} else {
+					datos += "(" + idAeropuertos.get(i) + ", "
+							+ idEmpleados.get(crt_empl_asig) + ", " + idPuestoaeropuerto.get(rand.nextInt(lenIdPuestoAeropuerto)) + "),\n";
+				}
+				crt_empl_asig++;
+			}
+		}
+		insertData("AeropuertoXEmpleado", "IdAeropuerto, IdEmpleado, IdPuestoAeropuerto", datos, c);
+		
+
+// ----------------------------------------------------------------------------------------------------------------------------------------		
+	
+		//Cargar datos para AerolineaXEmpleado	
+		List<Integer> numeroEmpleados = consultInteger(c, "SELECT CantidadEmpleados FROM Aerolinea", "CantidadEmpleados");
+		List<Integer> idPuestoAerolinea = consultInteger(c, "SELECT IdPuestoAerolinea FROM PuestoAerolinea", "IdPuestoAerolinea");
+		int lenNumeroEmpleados = numeroEmpleados.size();
+		int lenIdPuestoAerolinea = idPuestoAerolinea.size();
+		datos = "";
+		for (int i = 0; i < lenNumeroEmpleados ; i++) {
+			for (int j = 0; j < numeroEmpleados.get(i); j++) {
+				if (i == lenNumeroEmpleados - 1 && j == numeroEmpleados.get(i) - 1 ) {
+					datos += "(" + idAerolinea.get(i) + ", "
+							+ idEmpleados.get(crt_empl_asig) + ", " + idPuestoAerolinea.get(rand.nextInt(lenIdPuestoAerolinea)) +");";
+				} else {
+					datos += "(" + idAerolinea.get(i) + ", "
+							+ idEmpleados.get(crt_empl_asig) + ", " + idPuestoAerolinea.get(rand.nextInt(lenIdPuestoAerolinea)) +"),\n";
+				}
+				crt_empl_asig++;
+			}
+		}
+		insertData("AerolineaXEmpleado", "IdAeroLinea, IdEmpleado, IdPuestoAerolinea", datos, c);
+		
+// ----------------------------------------------------------------------------------------------------------------------------------------		
+		
+		//Cargar datos para AvionXProforma	
+		List<Integer> idProforma = consultInteger(c, "SELECT IdProforma FROM Proforma", "IdProforma");
+		List<Integer> avionesEnReparacion = consultInteger(c, "SELECT IdAvion FROM Avion Where Estado='En reparación'", "IdAvion");
+		int lenIdProforma = idProforma.size();
+		int lenAvionesEnReparacion = avionesEnReparacion.size();
+		datos = "";
+		for (int i = 0; i < lenIdProforma ; i++) {
+			if (i == lenIdProforma - 1) {
+				datos += "(" + avionesEnReparacion.get(i) + ", "
+						+ idProforma.get(i)  +");";
+			} else {
+				datos += "(" + avionesEnReparacion.get(i) + ", "
+						+ idProforma.get(i)  +"),\n";
+			}
+		}
+		insertData("AvionXProforma", "IdAvion, IdProforma", datos, c);
+		
+
+// ----------------------------------------------------------------------------------------------------------------------------------------		
+		
+		//Cargar datos para AeropuertoXAerolinea
+		datos = "";
+		for (int i = 0; i < lenIdAeropuertos ; i++) {
+			temp = rand.nextInt(9);
+			for (int j = 0; j < temp; j++) {
+				if (i == lenIdAeropuertos - 1 && j == temp - 1 ) {
+					datos += "(" + idAeropuertos.get(i) + ", "
+							+ idAerolinea.get(rand.nextInt(lenIdAerolinea)) + ");";
+				} else {
+					datos += "(" + idAeropuertos.get(i) + ", "
+							+ idAerolinea.get(rand.nextInt(lenIdAerolinea)) + "),\n";
+				}
+			}
+		}
+		insertData("AeropuertoXAerolinea", "IdAeropuerto, IdAeroLinea", datos, c);
+		
+// ----------------------------------------------------------------------------------------------------------------------------------------
+		 // Carga datos para VueloxAvion
+		 List<Integer> idAvionesTemp = consultInteger(c, "SELECT IdAvion FROM Avion;", "IdAvion");
+		 List<Integer> idAvionTemp = consultInteger(c, "SELECT IdAvion FROM Vuelo;", "IdAvion");
+		 List<Integer> idVueloTemp = consultInteger(c, "SELECT IdVuelo FROM Vuelo;","IdVuelo");
+		 
+		 int lenAvionesTemp = idAvionesTemp.size();
+		 int lenAvionTemp = idAvionTemp.size();
+		 datos = "";
+		 for(int i = 0; i < lenAvionesTemp; i++) {
+			 for (int j = 0; j < lenAvionTemp; j++) {
+				 if(idAvionesTemp.get(i) == idAvionTemp.get(j)) {
+					 if(i == lenAvionesTemp-1 && j == lenAvionTemp-1) {		
+					 	 datos += "(" +idVueloTemp.get(j)+ ", " + idAvionesTemp.get(i) + ");";
+					 }else {
+						 datos += "(" +idVueloTemp.get(j)+ ", " + idAvionesTemp.get(i) + "),\n";
+					 }
+				 }	
+			 }
+		 }
+		 StringBuffer sBuffer = new StringBuffer(datos);
+		 sBuffer.setCharAt(datos.length()-2, ';');
+		 		 
+		 insertData("VueloXAvion", "IdVuelo, IdAvion", sBuffer.toString(), c);
+
 
 	}
 }

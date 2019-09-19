@@ -249,3 +249,4 @@ CREATE TABLE IF NOT EXISTS  BodegaXAvion
 -- DROP TABLE AerolineaXEmpleado;
 -- DROP TABLE AeropuertoXEmpleado;
 -- DROP TABLE AeropuertoXAerolinea;
+
