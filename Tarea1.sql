@@ -110,10 +110,10 @@ CREATE TABLE IF NOT EXISTS Vuelo
     Destino TEXT NOT NULL,
     Origen TEXT NOT NULL,
     FechaSalida DATE NOT NULL,
-    HoraSalida DATE NOT NULL,
     FechaLLegada DATE NOT NULL,
-    HoraLLegada DATE NOT NULL,
-    EstadoVuelo TEXT NOT NULL
+    EstadoVuelo TEXT NOT NULL,
+    IdAvion INTEGER NOT NULL,
+    FOREIGN KEY (IdAvion) REFERENCES Avion(IdAvion)
 );
 
 CREATE TABLE IF NOT EXISTS Pasaporte
@@ -153,12 +153,9 @@ CREATE TABLE IF NOT EXISTS Controlador
 (
     IdControlador INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     CodigoComunicacion TEXT NOT NULL,
-    HoraLlegada DATE NOT NULL,
-    PosicionAVion TEXT NOT NULL,
     IdVuelo INTEGER NOT NULL,
-    IdAvion INTEGER NOT NULL,
-    FOREIGN KEY (IdVuelo) REFERENCES Vuelo(IdVuelo),
-    FOREIGN KEY (IdAvion) REFERENCES Avion(IdAvion)
+    Posicion TEXT NOT NULL,
+    FOREIGN KEY (IdVuelo) REFERENCES Vuelo(IdVuelo)
 );
 
 CREATE TABLE IF NOT EXISTS Bodega
@@ -232,6 +229,7 @@ CREATE TABLE IF NOT EXISTS  BodegaXAvion
     FOREIGN KEY (IdAvion) REFERENCES Avion(IdAvion),
     FOREIGN KEY (IdBodega) REFERENCES Bodega(IdBodega)
 );
+
 
 -- DROP TABLE Aerolinea;
 -- DROP TABLE Horario;
