@@ -76,6 +76,8 @@ CREATE TABLE IF NOT EXISTS Proforma
     FechaSalida DATE NOT NULL,
     Daños TEXT NOT NULL,
     IdTaller INTEGER NOT NULL,
+    IdAvion INTEGER NOT NULL,
+    FOREIGN KEY (IdAvion) REFERENCES Avion(IdAvion),
     FOREIGN KEY (IdTaller) REFERENCES Taller(IdTaller)
 );
 
@@ -90,10 +92,8 @@ CREATE TABLE IF NOT EXISTS Avion
     IdFabricante INTEGER NOT NULL,
     IdClaseViaje INTEGER NOT NULL,
     IdAeroLinea INTEGER NOT NULL,
-    IdProforma INTEGER NULL,
     FOREIGN KEY (IdClaseViaje) REFERENCES Clase(IdClaseViaje),
     FOREIGN KEY (IdAeroLinea) REFERENCES AeroLinea(IdAeroLinea),
-    FOREIGN KEY (IdProforma) REFERENCES Proforma(IdProforma),
     FOREIGN KEY (IdFabricante) REFERENCES Fabricante(IdFabricante)
 );
 
@@ -214,14 +214,6 @@ CREATE TABLE IF NOT EXISTS  ClaseXAvion
     FOREIGN KEY (IdClase) REFERENCES Clase(IdClase)
 );
 
-CREATE TABLE IF NOT EXISTS  AvionXProforma
-(
-    IdAvion INTEGER NOT NULL,
-    IdProforma INTERGER NOT NULL,
-    FOREIGN KEY (IdAvion) REFERENCES Avion(IdAvion),
-    FOREIGN KEY (IdProforma) REFERENCES Proforma(IdProforma)
-);
-
 CREATE TABLE IF NOT EXISTS  BodegaXAvion
 (
     IdAvion INTEGER NOT NULL,
@@ -230,6 +222,119 @@ CREATE TABLE IF NOT EXISTS  BodegaXAvion
     FOREIGN KEY (IdBodega) REFERENCES Bodega(IdBodega)
 );
 
+-- Consulta 1: TOP 10 de aerolÃ­neas con mayor cantidad de empleados.
+
+SELECT Nombre, CantidadEmpleados 
+FROM Aerolinea A
+ORDER BY CantidadEmpleados DESC
+LIMIT 10;
+
+-- Consulta 2: TOP 10 de aeropuertos con mÃ¡s AerolÃ­neas.
+SELECT A.Nombre, A.IdAeropuerto, COUNT(Ae.IdAeroLinea)
+FROM Aeropuerto A
+INNER JOIN AeropuertoXAerolinea Ae ON A.IdAeropuerto = Ae.IdAeroPuerto
+GROUP BY A.IdAeropuerto
+ORDER BY COUNT (Ae.IdAerolinea) DESC
+LIMIT 10;
+
+-- Consulta 3: Toda la información de un empleado de la aerolínea y del aeropuerto con
+-- el sueldo más alto.
+    SELECT * FROM (
+    SELECT E.NOMBRE, PA.Salario
+    FROM Empleado E
+        INNER JOIN AeropuertoXEmpleado AE ON AE.IdEmpleado = E.IdEmpleado
+        INNER JOIN PuestoAeropuerto PA ON AE.IdPuestoAeropuerto = PA.IdPuestoAeropuerto
+        ORDER BY PA.Salario DESC LIMIT 1)
+UNION
+    SELECT * FROM
+    (SELECT E.NOMBRE, PA.Salario
+    FROM Empleado E
+        INNER JOIN AerolineaXEmpleado AE ON AE.IdEmpleado = E.IdEmpleado
+        INNER JOIN PuestoAerolinea PA ON AE.IdPuestoAerolinea = PA.IdPuestoAerolinea
+        ORDER BY PA.Salario DESC LIMIT 1);
+
+
+-- Consulta 4: Promedio de salario para los aeropuertos con mayor número de
+-- empleados.
+SELECT A.Nombre, A.IdAeropuerto, COUNT(AE.IdEmpleado) AS CantEmpleados, 
+        AVG(PA.Salario) AS Salario
+FROM Aeropuerto A
+INNER JOIN AeropuertoXEmpleado AE ON A.IdAeropuerto = AE.IdAeropuerto
+INNER JOIN PuestoAeropuerto PA ON AE.IdPuestoAeropuerto = PA.IdPuestoAeropuerto
+GROUP by A.IdAeropuerto
+ORDER BY COUNT(AE.IdEmpleado) DESC;
+
+-- Consulta 5: Cantidad de aviones en una aerolínea que están en estado de reparación.
+SELECT AE.Nombre, COUNT(IdAvion) AS CantidadEnReparación
+FROM Avion A
+INNER JOIN Aerolinea AE ON A.IdAerolinea = AE.IdAerolinea
+WHERE A.Estado = 'En reparación'
+GROUP BY (AE.Nombre)
+
+-- Consulta 6: Costo de reparación, modelo, fabricante y el código de un avión para una
+-- aerolínea perteneciente a un aeropuerto específico.
+SELECT P.Costo, A.ModeloAvion, F.Nombre, A.CodigoAvion, 
+        AE.Nombre AS NombreAeropuerto, AE1.Nombre AS NombreAerolinea
+FROM Avion A
+INNER JOIN Proforma P ON A.IdAvion = P.IdAvion
+INNER JOIN Fabricante F ON A.IdFabricante = F.IdFabricante
+INNER JOIN Aerolinea AE1 ON A.IdAeroLinea = AE1.IdAeroLinea
+INNER JOIN AeropuertoXAerolinea AxE ON AE1.IdAerolinea = AxE.IdAeroLinea
+INNER JOIN Aeropuerto AE ON AxE.IdAeropuerto = AE.IdAeropuerto;
+
+-- Consulta 7: Cantidad de aviones activos en un aeropuerto.
+SELECT AE.Nombre, COUNT(A.IdAvion) AS CantidadAviones
+FROM Avion A
+INNER JOIN AeropuertoXAerolinea AA ON A.IdAerolinea = AA.IdAerolinea
+INNER JOIN Aeropuerto AE ON AA.IdAeropuerto = AE.IdAeropuerto
+GROUP BY (AE.Nombre);
+
+-- Consulta 8: Promedio de costo de reparación de los aviones para un aeropuerto
+-- específico.
+
+SELECT AE.Nombre, AVG(P.Costo) AS PromedioDeCostos
+FROM Aeropuerto AE
+INNER JOIN AeropuertoXAerolinea AA ON AE.IdAeropuerto = AA.IdAeropuerto
+INNER JOIN Aerolinea AE1 ON AA.IdAeroLinea = AE1.IdAeroLinea
+INNER JOIN Avion A ON A.IdAeroLinea = AE1.IdAeroLinea
+INNER JOIN Proforma P ON A.IdAvion = P.IdAvion
+GROUP BY (AE.Nombre);
+
+-- Consulta 9: Cantidad de aviones inactivos dentro de una bodega.
+SELECT B.Nombre, COUNT(BA.IdAvion) AS CantidadAviones
+FROM Avion A
+INNER JOIN BodegaXAvion BA ON BA.IdAvion = A.IdAvion
+INNER JOIN Bodega B ON B.IdBodega = BA.IdBodega
+WHERE A.Estado = "Inactivo"
+GROUP BY (B.Nombre);
+
+-- Consulta 10: Nombre de los fabricantes con la mayor cantidad de modelos.
+SELECT F.Nombre, COUNT(A.IdAvion) AS CantidadAviones
+FROM Avion A
+INNER JOIN Fabricante F ON A.IdFabricante = F.IdFabricante
+GROUP BY (F.Nombre);
+
+-- Consulta 11: Cantidad de aerolíneas que contienen la letra “A” en el nombre. De este
+-- resultado además deben de mostrar cuáles tienen más vuelos activos.
+SELECT AE1.Nombre, COUNT(A.IdAvion) AS CantidadAviones
+FROM Aerolinea AE1
+INNER JOIN Avion A ON A.IdAeroLinea = AE1.IdAeroLinea
+INNER JOIN Vuelo V ON A.IdAvion = V.IdAvion
+WHERE instr(AE1.Nombre, 'A') > 1 
+OR instr(AE1.Nombre, 'a') > 1
+AND V.EstadoVuelo = "Activo"
+GROUP BY (AE1.Nombre)
+ORDER BY COUNT(A.IdAvion) DESC;
+
+-- Consulta 12: Intervalo de horas con la mayor llegada de aviones para un aeropuerto.
+SELECT TIME(V.FechaLLegada), COUNT(V.IdVuelo)
+FROM Aeropuerto AE
+INNER JOIN AeropuertoXAerolinea AA ON AE.IdAeropuerto = AA.IdAeropuerto 
+INNER JOIN Aerolinea AE1 ON AA.IdAeroLinea = AE1.IdAerolinea
+INNER JOIN Avion A ON AE1.IdAvion = A.IdAvion
+INNER JOIN Vuelo V ON A.IdAvion = V.IdAvion
+GROUP BY (TIME(V.FechaLLegada))
+ORDER BY COUNT(V.IdVuelo);
 
 -- DROP TABLE Aerolinea;
 -- DROP TABLE Horario;

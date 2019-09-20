@@ -83,7 +83,6 @@ public class SqliteConection {
 		try {
 			Statement state = con.createStatement();
 			state.executeUpdate("INSERT INTO " + tabla + " ("+ atributos + ")"+ " VALUES" + datos);
-//			System.out.println("INSERT INTO " + tabla + " (" + atributos + ")" + " VALUES " + datos);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -398,47 +397,6 @@ public class SqliteConection {
 			}
 		}
 		insertData("Clase","Nombre, Precio", datos, c);
-	
-// ----------------------------------------------------------------------------------------------------------------------------------------
-		//Carga datos para proforma
-	
-		List<Integer> idTalleres = consultInteger(c, "SELECT IdTaller FROM Taller", "IdTaller");
-		List<String> listaDanos = readList("..\\SqliteConection\\data\\ciudades.txt");	
-		List<String> listaRepuestos = new ArrayList<String>();
-		listaRepuestos.add("Ala");
-		listaRepuestos.add("Fuselaje");
-		listaRepuestos.add("Superficie de Control");
-		listaRepuestos.add("Alerones");
-		listaRepuestos.add("Flaps");
-		listaRepuestos.add("Spoilers");
-		listaRepuestos.add("Slats");
-		listaRepuestos.add("Estabilizador Horizontal");
-		listaRepuestos.add("Estabilizador Vertical");
-		listaRepuestos.add("Tren de Aterrizaje");
-		listaRepuestos.add("Instrumento de Control");
-		
-		int lenRepuestos = listaRepuestos.size();
-		int lenDanos = listaDanos.size();
-		int lenIdTalleres = idTalleres.size();
-		Date fechaTemp = new java.util.Date();
-		String fechaLlegadaTemp;
-		//Inserta datos de proforma
-		datos = "";
-		int pos = 0;
-		for (int i = 0; i < 20 ; i++) {
-			fechaLlegadaTemp = generateDate(fechaTemp,-1* rand.nextInt(72));
-			pos = rand.nextInt(lenRepuestos);
-			if(i == 19) {
-				datos += "(\""+ listaRepuestos.get(pos) +"\", " + (rand.nextInt(2000000)+100000) + ", \""
-						+ fechaLlegadaTemp + "\", \""+ generateDate(fechaTemp, rand.nextInt(130) + 10) + "\""
-								+ ",\"" + listaDanos.get(rand.nextInt(lenDanos)) + "\", \"" + idTalleres.get(rand.nextInt(lenIdTalleres)) + "\");";
-			}else {
-				datos += "(\""+ listaRepuestos.get(pos) +"\", " + (rand.nextInt(2000000)+100000) + ", \""
-						+ fechaLlegadaTemp + "\", \""+ generateDate(fechaTemp, rand.nextInt(130) + 10) + "\" ,"
-								+ "\"" + listaDanos.get(rand.nextInt(lenDanos)) + "\", \"" + idTalleres.get(rand.nextInt(lenIdTalleres)) + "\"),\n";
-			}
-		}
-		  insertData("Proforma", "Respuestos, Costo, FechaLLegada, FechaSalida, Daños, IdTaller", datos, c);
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 		// Carga datos para aerolinea
@@ -490,22 +448,18 @@ public class SqliteConection {
 							+ listaEstadoAvion.get(rand.nextInt(3)) + "\", "
 							+ idFabricantes.get(rand.nextInt(lenIdFabricantes)) + ", "
 							+ idClases.get(rand.nextInt(lenIdClases)) + ", "
-							+ idAerolinea.get(rand.nextInt(lenIdAerolinea)) + ", "
-							+ idProformas.get(rand.nextInt(lenIdProformas))
-							+ ");";
+							+ idAerolinea.get(rand.nextInt(lenIdAerolinea)) + ");";
 			} else {
 				datos += "(\"" + listaCodigos.get(i) + "\", \"" + listaModeloAvion.get(rand.nextInt(lenModeloAvion))
 					+ "\", " + (rand.nextInt(350) + 150) + ", " + rand.nextInt(60) + ", \""
 					+ listaEstadoAvion.get(rand.nextInt(3)) + "\", "
 					+ idFabricantes.get(rand.nextInt(lenIdFabricantes)) + ", "
 					+ idClases.get(rand.nextInt(lenIdClases)) + ", "
-					+ idAerolinea.get(rand.nextInt(lenIdAerolinea)) + ", "
-					+ idProformas.get(rand.nextInt(lenIdProformas))
-					+ "),\n";
+					+ idAerolinea.get(rand.nextInt(lenIdAerolinea)) + "),\n";
 			}
 		}
 		insertData("Avion", "CodigoAvion, ModeloAvion, CapacidadTripulacion, CapacidadItinerario, Estado, "
-				+ "IdFabricante, IdClaseViaje, IdAerolinea, IdProforma", datos, c);
+				+ "IdFabricante, IdClaseViaje, IdAerolinea", datos, c);
 // ----------------------------------------------------------------------------------------------------------------------------------------
 		//Carga datos para Vuelo
 		
@@ -545,7 +499,55 @@ public class SqliteConection {
 			}
 		}
 		insertData("Vuelo", "NumeroVuelo, Destino, Origen, FechaSalida, FechaLlegada, EstadoVuelo, IdAvion", datos, c);
-				
+	
+		
+// ----------------------------------------------------------------------------------------------------------------------------------------
+		//Carga datos para proforma
+	
+		List<Integer> idTalleres = consultInteger(c, "SELECT IdTaller FROM Taller", "IdTaller");
+		List<Integer> idAvion = consultInteger(c, "SELECT IdAvion FROM Avion", "IdAvion");
+		List<String> listaDanos = readList("..\\SqliteConection\\data\\ciudades.txt");	
+		List<String> listaRepuestos = new ArrayList<String>();
+		listaRepuestos.add("Ala");
+		listaRepuestos.add("Fuselaje");
+		listaRepuestos.add("Superficie de Control");
+		listaRepuestos.add("Alerones");
+		listaRepuestos.add("Flaps");
+		listaRepuestos.add("Spoilers");
+		listaRepuestos.add("Slats");
+		listaRepuestos.add("Estabilizador Horizontal");
+		listaRepuestos.add("Estabilizador Vertical");
+		listaRepuestos.add("Tren de Aterrizaje");
+		listaRepuestos.add("Instrumento de Control");
+		
+		int lenIdAvion = idAvion.size();
+		int lenRepuestos = listaRepuestos.size();
+		int lenDanos = listaDanos.size();
+		int lenIdTalleres = idTalleres.size();
+		Date fechaTemp = new java.util.Date();
+		String fechaLlegadaTemp;
+		//Inserta datos de proforma
+		datos = "";
+		int pos = 0;
+		for (int i = 0; i < 40 ; i++) {
+			fechaLlegadaTemp = generateDate(fechaTemp,-1* rand.nextInt(72));
+			pos = rand.nextInt(lenRepuestos);
+			if(i == 39) {
+				datos += "(\""+ listaRepuestos.get(pos) +"\", " + (rand.nextInt(2000000)+100000) + ", \""
+						+ fechaLlegadaTemp + "\", \""+ generateDate(fechaTemp, rand.nextInt(130) + 10) + "\""
+						+ ",\"" + listaDanos.get(rand.nextInt(lenDanos)) + "\", " 
+						+ idTalleres.get(rand.nextInt(lenIdTalleres)) + ", "
+						+ idAvion.get(rand.nextInt(lenIdAvion)) + ");";
+			}else {
+				datos += "(\""+ listaRepuestos.get(pos) +"\", " + (rand.nextInt(2000000)+100000) + ", \""
+						+ fechaLlegadaTemp + "\", \""+ generateDate(fechaTemp, rand.nextInt(130) + 10) + "\""
+						+ ",\"" + listaDanos.get(rand.nextInt(lenDanos)) + "\", " 
+						+ idTalleres.get(rand.nextInt(lenIdTalleres)) + ", "
+						+ idAvion.get(rand.nextInt(lenIdAvion)) + "),\n";
+			}
+		}
+		insertData("Proforma", "Respuestos, Costo, FechaLLegada, FechaSalida, Daños, IdTaller, IdAvion", datos, c);
+		
 // ----------------------------------------------------------------------------------------------------------------------------------------
 		//Pasajero
 		List<Integer> idPasaporte = consultInteger(c, "SELECT IdPasaporte FROM Pasaporte;", "IdPasaporte");
@@ -598,9 +600,7 @@ public class SqliteConection {
 		int lenListaPosiciones = listaPosiciones.size();
 		
 		List<Integer> idVuelo = consultInteger(c, "SELECT IdVuelo FROM Vuelo;", "IdVuelo");
-		List<Integer> idAvion = consultInteger(c, "SELECT IdAvion FROM Avion;", "IdAvion");
 		int lenIdVuelo = idVuelo.size();
-		int lenIdAvion = idAvion.size();
 
 		datos = "";
 		listaCodigos = generateCode("CONT", 20);
@@ -659,7 +659,7 @@ public class SqliteConection {
 					break;
 				} else {
 					datos += "(" + idAvionesInactivos.get(cont) + ", "
-							+ idClase.get(i) + "),\n";
+							+ idBodegas.get(i) + "),\n";
 				}
 				cont++;
 			}
@@ -718,26 +718,6 @@ public class SqliteConection {
 		
 // ----------------------------------------------------------------------------------------------------------------------------------------		
 		
-		//Cargar datos para AvionXProforma	
-		List<Integer> idProforma = consultInteger(c, "SELECT IdProforma FROM Proforma", "IdProforma");
-		List<Integer> avionesEnReparacion = consultInteger(c, "SELECT IdAvion FROM Avion Where Estado='En reparación'", "IdAvion");
-		int lenIdProforma = idProforma.size();
-		int lenAvionesEnReparacion = avionesEnReparacion.size();
-		datos = "";
-		for (int i = 0; i < lenIdProforma ; i++) {
-			if (i == lenIdProforma - 1) {
-				datos += "(" + avionesEnReparacion.get(i) + ", "
-						+ idProforma.get(i)  +");";
-			} else {
-				datos += "(" + avionesEnReparacion.get(i) + ", "
-						+ idProforma.get(i)  +"),\n";
-			}
-		}
-		insertData("AvionXProforma", "IdAvion, IdProforma", datos, c);
-		
-
-// ----------------------------------------------------------------------------------------------------------------------------------------		
-		
 		//Cargar datos para AeropuertoXAerolinea
 		datos = "";
 		for (int i = 0; i < lenIdAeropuertos ; i++) {
@@ -777,8 +757,8 @@ public class SqliteConection {
 		 StringBuffer sBuffer = new StringBuffer(datos);
 		 sBuffer.setCharAt(datos.length()-2, ';');
 		 		 
-		 insertData("VueloXAvion", "IdVuelo, IdAvion", sBuffer.toString(), c);
-
-
+		 insertData("VueloXAvion", "IdVuelo, IdAvion", sBuffer.toString(), c);	 
+		 
+		 System.out.println("Datos agregados exitosamente a todas las tablas");
 	}
 }
